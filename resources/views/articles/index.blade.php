@@ -1,22 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Blog page</title>
+    <title>Articles</title>
 </head>
 <body>
-    <h1>Welcome to the programming blog</h1>
-    @foreach ($articles as $article)
-        <h2><a href="{{ route('articles.show', $article->id) }}">{{ $article->title }}</a></h2>
-        <p>An article by <em>{{ $article->author }}</em> published on {{ $article->created_at->format('d.m.Y H:i:s') }}</p>
-        <p>{{ $article->body }}</p>
-        <p>
-            <form method="POST" action="{{ route('articles.destroy', $article->id) }}">
-                @csrf
-                @method('DELETE')
-                <button type="submit">Delete post</button>
-            </form>
-        </p>
-    @endforeach
+    <h1>Articles</h1>
+    <ul>
+        @foreach($articles as $article)
+            <li>
+                <h2>{{ $article->title }}</h2>
+                <p>{{ $article->content }}</p>
+                <p><strong>Source:</strong> {{ $article->source }}</p>
+                <p><strong>Category ID:</strong> {{ $article->category_id }}</p>
+                <p><strong>Published At:</strong> {{ $article->created_at }}</p>
+            </li>
+        @endforeach
+    </ul>
 </body>
 </html>

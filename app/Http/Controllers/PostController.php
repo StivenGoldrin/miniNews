@@ -5,18 +5,30 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Article;
 use App\Models\Category;
+use App\Services\NewsService;
 
 class PostController extends Controller
 {
+    protected $newsService;
+
+    public function __construct(NewsService $newsService)
+    {
+        $this->newsService = $newsService;
+    }
+
     /**
      * Display a listing of the blog entries.
      */
     public function index()
     {
+        // Fetching news from the API
+        $news = $this->newsService->fetchNews('technology');
+
         // Reads all articles and all categories from the database
         $articles = Article::all()->sortByDesc('created_at');
         $categories = Category::all();
-        return view('articles.index', compact('articles', 'categories'));
+
+        return view('articles.index', compact('articles', 'categories', 'news'));
     }
 
     /**
