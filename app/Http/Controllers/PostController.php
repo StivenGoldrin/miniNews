@@ -28,7 +28,10 @@ class PostController extends Controller
         $articles = Article::all()->sortByDesc('created_at');
         $categories = Category::all();
 
-        return view('articles.index', compact('articles', 'categories', 'news'));
+        // Combine fetched news with local articles
+        $allArticles = collect($news)->merge($articles);
+
+        return view('articles.index', compact('allArticles', 'categories'));
     }
 
     /**
@@ -52,8 +55,9 @@ class PostController extends Controller
      */
     public function show(string $id)
     {
-        $article = Article::find($id);
-        return view('articles.show', compact('article'));
+        $article = Article::findOrFail($id);
+        $categories = Category::all();
+        return view('articles.show', compact('article', 'categories'));
     }
 
     /**
