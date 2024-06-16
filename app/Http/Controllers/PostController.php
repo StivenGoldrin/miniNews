@@ -19,17 +19,30 @@ class PostController extends Controller
     /**
      * Display a listing of the blog entries.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Fetching news from the API
-        $news = $this->newsService->fetchNews('technology');
+        $category = $request->get('category');
+        $country = $request->get('country', 'us'); // Default to 'us' if no country is selected
 
-        // Reads all articles and all categories from the database
-        $articles = Article::all()->sortByDesc('created_at');
+        // Fetching news from the API
+        $news = $this->newsService->fetchNews($country, $category);
+
+        // Fetch articles and categories from the database
+        $query = Article::query();
+
+        if ($category) {
+            $query->where('category_id', $category);
+        }
+
+        $articles = $query->get()->sortByDesc('created_at');
         $categories = Category::all();
 
         // Combine fetched news with local articles
         $allArticles = collect($news)->merge($articles);
+
+        if ($request->ajax()) {
+            return view('articles.partials.articles', compact('allArticles'))->render();
+        }
 
         return view('articles.index', compact('allArticles', 'categories'));
     }
@@ -99,5 +112,4 @@ class PostController extends Controller
         Article::findOrFail($id)->delete();
         return redirect()->route('articles.index');
     }
-
 }

@@ -44,30 +44,22 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Create Categories
-        $category1 = Category::create(['name' => 'Tech']);
-        $category2 = Category::create(['name' => 'Sports']);
-        $category3 = Category::create(['name' => 'Entertainment']);
+        $categories = [
+            'general',
+            'health',
+            'tech',
+            'sports',
+            'science',
+            'business',
+            'politics',
+            'food',
+            'travel',
+            'entertainment',
+        ];
 
-        // Create Articles
-        $article1 = Article::create([
-            'title' => 'New Tech Trends in 2024',
-            'content' => 'There are many new tech trends emerging in 2024...',
-            'source' => 'TechCrunch',
-            'category_id' => $category1->id
-        ]);
+        foreach ($categories as $category) {
+            Category::firstOrCreate(['name' => $category]);
+        }
 
-        $article2 = Article::create([
-            'title' => 'Top Sports Events in 2024',
-            'content' => 'Here are the top sports events to look forward to in 2024...',
-            'source' => 'ESPN',
-            'category_id' => $category2->id
-        ]);
-
-        $article3 = Article::create([
-            'title' => 'Upcoming Movies in 2024',
-            'content' => 'The entertainment industry is buzzing with new movie releases...',
-            'source' => 'Variety',
-            'category_id' => $category3->id
-        ]);
     }
 }

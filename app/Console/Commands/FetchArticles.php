@@ -25,23 +25,34 @@ class FetchArticles extends Command
         $country = $this->argument('country');
         $category = $this->argument('category');
 
-        $news = $this->newsService->fetchNews($country, $category);
+        try {
+            // Fetch news from the external API using the injected NewsService
+            $news = $this->newsService->fetchNews($country, $category);
 
-        if ($news && isset($news['data'])) {
-            foreach ($news['data'] as $newsItem) {
-                Article::updateOrCreate(
-                    ['title' => $newsItem['title']],
-                    [
-                        'content' => $newsItem['description'],
-                        'source' => $newsItem['url'],
-                        'category_id' => 1, // Assuming 1 is a valid category ID in your system
-                        'created_at' => Carbon::now(),
-                        'updated_at' => Carbon::now()
-                    ]
-                );
+            if ($news && isset($news['data'])) {
+                foreach ($news['data'] as $newsItem) {
+                    // Update or create the article in the local database
+                    Article::updateOrCreate(
+                        ['source' => $newsItem['url']], // Assuming 'url' is unique for each article
+                        [
+                            'title' => $newsItem['title'],
+                            'description' => $newsItem['description'],
+                            'content' => $newsItem['content'] ?? '', // Adjust based on API response structure
+                            'image_url' => $newsItem['image_url'] ?? null, // Optional fields
+                            'published_at' => $newsItem['published_at'] ?? null,
+                            'category_id' => 1, // Replace with actual category ID in your system
+                            'created_at' => Carbon::now(),
+                            'updated_at' => Carbon::now()
+                        ]
+                    );
+                }
+
+                $this->info('Articles have been fetched and stored in the database.');
+            } else {
+                $this->error('No data found in the API response.');
             }
+        } catch (\Exception $e) {
+            $this->error('Failed to fetch articles: ' . $e->getMessage());
         }
-
-        $this->info('Articles have been fetched and stored in the database.');
     }
 }
