@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\LocaleController;
+
 
 //This line redirects any requests to the root URL / to /articles.
 Route::redirect('/', '/articles');
@@ -49,3 +51,5 @@ Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.
 Route::get('/admin/users/{id}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
 Route::post('/admin/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
 Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+
+Route::get('locale/{locale}', [LocaleController::class, 'setLocale'])->name('setLocale');

@@ -3,22 +3,22 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Session;
+
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cookie;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
-    public function register(): void
+    public function boot()
     {
-        //
+        $locale = Cookie::get('locale', 'en');
+        App::setLocale($locale);
     }
 
-    /**
-     * Bootstrap any application services.
-     */
-    public function boot(): void
+    public function register()
     {
         //
     }
 }
+

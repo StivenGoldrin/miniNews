@@ -35,15 +35,15 @@
                         <li class="nav-item">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="nav-link btn btn-link">Logout</button>
+                                <button type="submit" class="nav-link btn btn-link">{{ __('messages.logout') }}</button>
                             </form>
                         </li>
                     @else
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}">Login</a>
+                            <a class="nav-link" href="{{ route('login') }}">{{ __('messages.login') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('register') }}">Register</a>
+                            <a class="nav-link" href="{{ route('register') }}">{{ __('messages.register') }}</a>
                         </li>
                     @endauth
                 </ul>
@@ -59,13 +59,13 @@
                 <p class="card-text">{{ $article->content }}</p>
             </div>
             <div class="card-footer text-muted">
-                <p><strong>Description:</strong> {{ $article->description }}</p>
-                <p><strong>Snippet:</strong> {{ $article->snippet }}</p>
+                <p><strong>{{ __('messages.description') }}:</strong> {{ $article->description }}</p>
+                <p><strong>{{ __('messages.snippet') }}:</strong> {{ $article->snippet }}</p>
                 <p><strong>URL:</strong> <a href="{{ $article->url }}" target="_blank">{{ $article->url }}</a></p>
-                <p><strong>Source:</strong> {{ $article->source }}</p>
-                <p><strong>Language:</strong> {{ $article->language }}</p>
-                <p><strong>Published at:</strong> {{ \Carbon\Carbon::parse($article->published_at)->format('d M Y H:i:s') }}</p>
-                <p><strong>Categories:</strong>
+                <p><strong>{{ __('messages.source') }}:</strong> {{ $article->source }}</p>
+                <p><strong>{{ __('messages.language') }}:</strong> {{ $article->language }}</p>
+                <p><strong>{{ __('messages.published_at') }}:</strong> {{ \Carbon\Carbon::parse($article->published_at)->format('d M Y H:i:s') }}</p>
+                <p><strong>{{ __('messages.categories') }}:</strong>
                     @if(!empty($article->categories))
                         @foreach(json_decode($article->categories, true) as $category)
                             <span class="badge badge-secondary">{{ $category }}</span>
@@ -77,14 +77,14 @@
             </div>
         </div>
 
-        <a href="{{ route('articles.index') }}" class="btn btn-secondary back-button">Back to Articles</a>
+        <a href="{{ route('articles.index') }}" class="btn btn-secondary back-button">{{ __('messages.Back_to_Articles') }}</a>
         @auth
-            <a href="{{ route('articles.download', $article->id) }}" class="btn btn-primary download-button">Download as PDF</a>
+            <a href="{{ route('articles.download', $article->id) }}" class="btn btn-primary download-button">{{ __('messages.Download_as_PDF') }}</a>
             @if(auth()->user()->role_id == 1)
                 <form action="{{ route('articles.destroy', $article->id) }}" method="POST" class="d-inline">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger delete-button" onclick="return confirm('Are you sure you want to delete this article?')">Delete Article</button>
+                    <button type="submit" class="btn btn-danger delete-button" onclick="return confirm('Are you sure you want to delete this article?')">{{ __('messages.Delete_Article') }}</button>
                 </form>
             @endif
         @endauth
