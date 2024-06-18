@@ -1,5 +1,5 @@
 @foreach($allArticles as $article)
-    <div class="col-md-4 mb-4 article-card" data-category-id="{{ $article->category_id }}">
+    <div class="col-md-4 mb-4 article-card" data-category-name="{{ $article->category->name }}">
         <div class="card">
             @if($article->image_url)
                 <img src="{{ $article->image_url }}" class="card-img-top" alt="{{ $article->title }}">

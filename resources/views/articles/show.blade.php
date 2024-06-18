@@ -16,7 +16,7 @@
         .card-footer {
             font-size: 0.85rem;
         }
-        .back-button {
+        .back-button, .download-button, .delete-button {
             margin-top: 1rem;
             margin-bottom: 1rem;
         }
@@ -32,9 +32,6 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
                     @auth
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
-                        </li>
                         <li class="nav-item">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -81,6 +78,16 @@
         </div>
 
         <a href="{{ route('articles.index') }}" class="btn btn-secondary back-button">Back to Articles</a>
+        @auth
+            <a href="{{ route('articles.download', $article->id) }}" class="btn btn-primary download-button">Download as PDF</a>
+            @if(auth()->user()->role_id == 1)
+                <form action="{{ route('articles.destroy', $article->id) }}" method="POST" class="d-inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger delete-button" onclick="return confirm('Are you sure you want to delete this article?')">Delete Article</button>
+                </form>
+            @endif
+        @endauth
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>

@@ -29,36 +29,38 @@
                 <ul class="navbar-nav mr-auto">
                     @foreach($categories as $category)
                         <li class="nav-item">
-                            <a class="nav-link category-filter" href="#" data-category-id="{{ $category->id }}">{{ $category->name }}</a>
+                            <a class="nav-link category-filter" href="#" data-category-name="{{ $category->name }}">{{ $category->name }}</a>
                         </li>
                     @endforeach
                 </ul>
                 <ul class="navbar-nav ml-auto">
-                    @auth
+                @auth
+                    <li class="nav-item">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="nav-link btn btn-link">Logout</button>
+                        </form>
+                    </li>
+                    @if(Auth::user()->role_id == 1)
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
+                            <a class="nav-link" href="{{ route('admin.users.index') }}">Manage Users</a>
                         </li>
-                        <li class="nav-item">
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="nav-link btn btn-link">Logout</button>
-                            </form>
-                        </li>
-                    @else
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('register') }}">Register</a>
-                        </li>
-                    @endauth
+                    @endif
+                @else
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('login') }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('register') }}">Register</a>
+                    </li>
+                @endauth
                 </ul>
             </div>
         </nav>
 
         <div class="row mt-4" id="article-container">
             @foreach($allArticles as $article)
-                <div class="col-md-4 mb-4 article-card" data-category-id="{{ $article->category_id }}">
+                <div class="col-md-4 mb-4 article-card" data-category-name="{{ $article->category->name }}">
                     <div class="card">
                         @if($article->image_url)
                             <img src="{{ $article->image_url }}" class="card-img-top" alt="{{ $article->title }}">
@@ -85,12 +87,12 @@
         $(document).ready(function() {
             $('.category-filter').on('click', function(e) {
                 e.preventDefault();
-                var categoryId = $(this).data('category-id');
+                var categoryName = $(this).data('category-name');
 
                 $.ajax({
                     url: "{{ route('articles.index') }}",
                     method: 'GET',
-                    data: { category: categoryId },
+                    data: { category: categoryName },
                     success: function(response) {
                         $('#article-container').html(response);
                     }

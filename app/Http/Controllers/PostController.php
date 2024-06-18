@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Article;
 use App\Models\Category;
 use App\Services\NewsService;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PostController extends Controller
 {
@@ -22,19 +23,16 @@ class PostController extends Controller
     public function index(Request $request)
     {
         $category = $request->get('category');
-        $country = $request->get('country', 'us'); // Default to 'us' if no country is selected
-
         // Fetching news from the API
-        $news = $this->newsService->fetchNews($country, $category);
+        $news = $this->newsService->fetchNews($category);
 
-        // Fetch articles and categories from the database
-        $query = Article::query();
+        // Reads all articles and all categories from the database
+        $articles = Article::whereHas('category', function($query) use ($category) {
+            if ($category) {
+                $query->where('name', $category);
+            }
+        })->get();
 
-        if ($category) {
-            $query->where('category_id', $category);
-        }
-
-        $articles = $query->get()->sortByDesc('created_at');
         $categories = Category::all();
 
         // Combine fetched news with local articles
@@ -111,5 +109,16 @@ class PostController extends Controller
     {
         Article::findOrFail($id)->delete();
         return redirect()->route('articles.index');
+    }
+
+    /**
+     * Download the specified article as a PDF.
+     */
+    public function downloadPDF(string $id)
+    {
+        $article = Article::findOrFail($id);
+        $pdf = PDF::loadView('articles.pdf', compact('article'));
+
+        return $pdf->download('article-' . $id . '.pdf');
     }
 }

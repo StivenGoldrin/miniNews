@@ -28,14 +28,15 @@ class NewsService
         ];
     }
 
-    public function fetchNews($country, $category = null)
+    public function fetchNews($category = 'general')
     {
         $apiKey = config('services.newsapi.key');
+        $categories = $category ?? 'general';
+
         $response = Http::get('https://api.thenewsapi.com/v1/news/all', [
             'api_token' => $apiKey,
-            'locale' => $country, 
             'language' => 'en', 
-            'categories' => $category
+            'categories' => $categories
         ]);
 
         if ($response->successful()) {
@@ -43,7 +44,7 @@ class NewsService
 
             foreach ($newsData['data'] as $newsItem) {
                 // Check if category key exists
-                $categoryId = $this->mapCategory($newsItem['category'] ?? 'general');
+                $categoryId = $this->mapCategory($newsItem['categories'][0] ?? 'general'); // Adjust based on API response structure
 
                 Article::updateOrCreate(
                     ['source' => $newsItem['url']], // Assuming 'url' is unique for each article
@@ -66,6 +67,7 @@ class NewsService
             throw new \Exception('Failed to fetch news: ' . $response->status());
         }
     }
+
 
     protected function mapCategory($apiCategory)
     {
